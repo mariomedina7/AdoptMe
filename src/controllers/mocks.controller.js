@@ -18,7 +18,10 @@ const generateData = async (req, res) => {
     const { users: usersCount = 0, pets: petsCount = 0 } = req.body;
 
     if (usersCount <= 0 || petsCount <= 0) {
-      return res.status(400).json({ error: "Los números deben ser positivos y mayores a cero" });
+      req.logger.warn("Los números deben ser positivos y mayores a cero");
+      return res
+        .status(400)
+        .json({ error: "Los números deben ser positivos y mayores a cero" });
     }
 
     const users = Array.from({ length: usersCount }, () => generateUser());
@@ -42,13 +45,14 @@ const generateData = async (req, res) => {
       )
     );
 
+    req.logger.info("Datos mock generados correctamente");
     res.status(201).json({
       message: "Datos generados correctamente",
       users: insertedUsers.length,
       pets: insertedPets.length,
     });
   } catch (error) {
-    console.error(error);
+    req.logger.grave(`Error al generar los datos: ${error.message}`);
     res.status(500).json({ error: "Error al generar los datos" });
   }
 };

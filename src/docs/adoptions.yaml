@@ -1,0 +1,125 @@
+paths:
+  /api/adoptions:
+    get:
+      summary: Obtener todas las adopciones
+      tags:
+        - Adopciones
+      description: Retorna la lista completa de adopciones registradas, incluyendo el usuario adoptante y la mascota adoptada.
+      responses:
+        200:
+          description: Lista de adopciones obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Adoption'
+        500:
+          description: Error interno del servidor
+
+  /api/adoptions/{aid}:
+    get:
+      summary: Obtener una adopción por ID
+      tags:
+        - Adopciones
+      description: Retorna la información de una adopción específica según su ID.
+      parameters:
+        - in: path
+          name: aid
+          required: true
+          schema:
+            type: string
+          description: ID de la adopción a consultar.
+      responses:
+        200:
+          description: Adopción obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adoption'
+        404:
+          description: Adopción no encontrada
+        500:
+          description: Error interno del servidor
+
+  /api/adoptions/{uid}/{pid}:
+    post:
+      summary: Crear una nueva adopción
+      tags:
+        - Adopciones
+      description: Crea una adopción asignando una mascota (`pid`) a un usuario (`uid`).  
+        Si la adopción es exitosa, la mascota pasa a tener como propietario al usuario especificado.
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: ID del usuario adoptante.
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID de la mascota a adoptar.
+      responses:
+        201:
+          description: Adopción creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adoption'
+        400:
+          description: Datos inválidos o adopción duplicada
+        404:
+          description: Usuario o mascota no encontrados
+        500:
+          description: Error interno del servidor
+
+components:
+  schemas:
+    Adoption:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6541f3e7ca56b1001276c9a4
+        owner:
+          type: object
+          description: Usuario que adopta la mascota.
+          properties:
+            _id:
+              type: string
+              example: 652a3d5baf8c2c0012e4f5a1
+            first_name:
+              type: string
+              example: Mario
+            last_name:
+              type: string
+              example: Medina
+            email:
+              type: string
+              example: mario@example.com
+        pet:
+          type: object
+          description: Mascota adoptada.
+          properties:
+            _id:
+              type: string
+              example: 6530d76a9a12f10012b4a3c8
+            name:
+              type: string
+              example: Max
+            specie:
+              type: string
+              example: Perro
+            birthDate:
+              type: string
+              format: date
+              example: 2021-04-15
+            adopted:
+              type: boolean
+              example: true
+            image:
+              type: string
+              example: https://cdn.example.com/uploads/pets/max.jpg

@@ -19,4 +19,8 @@ export default class UserRepository extends GenericRepository {
   updateById = (id, doc) => {
     return this.update(id, doc);
   };
+
+  deleteById = (id) => {
+    return this.delete(id);
+  };
 }

@@ -1,0 +1,227 @@
+paths:
+  /api/pets:
+    get:
+      summary: Obtener todas las mascotas
+      tags:
+        - Mascotas
+      description: Retorna la lista completa de mascotas registradas en el sistema.
+      responses:
+        200:
+          description: Lista de mascotas obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        500:
+          description: Error interno del servidor
+
+    post:
+      summary: Crear una nueva mascota
+      tags:
+        - Mascotas
+      description: Crea un nuevo registro de mascota en la base de datos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetCreate'
+      responses:
+        201:
+          description: Mascota creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Datos inválidos o faltantes
+        500:
+          description: Error interno del servidor
+
+  /api/pets/withimage:
+    post:
+      summary: Crear una mascota con imagen
+      tags:
+        - Mascotas
+      description: Permite crear una mascota subiendo una imagen asociada (multipart/form-data).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - specie
+                - image
+              properties:
+                name:
+                  type: string
+                  example: Max
+                specie:
+                  type: string
+                  example: Perro
+                birthDate:
+                  type: string
+                  format: date
+                  example: 2021-04-15
+                adopted:
+                  type: boolean
+                  example: false
+                owner:
+                  type: string
+                  example: 652a3d5baf8c2c0012e4f5a1
+                image:
+                  type: string
+                  format: binary
+                  description: Imagen de la mascota
+      responses:
+        201:
+          description: Mascota creada correctamente con imagen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Datos inválidos o imagen faltante
+        500:
+          description: Error interno del servidor
+
+  /api/pets/{pid}:
+    put:
+      summary: Actualizar una mascota por ID
+      tags:
+        - Mascotas
+      description: Actualiza los datos de una mascota existente según su ID.
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID de la mascota que se desea actualizar.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetUpdate'
+      responses:
+        200:
+          description: Mascota actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Datos inválidos
+        404:
+          description: Mascota no encontrada
+        500:
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar una mascota por ID
+      tags:
+        - Mascotas
+      description: Elimina una mascota del sistema según su ID.
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID de la mascota que se desea eliminar.
+      responses:
+        200:
+          description: Mascota eliminada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Mascota eliminada correctamente
+        404:
+          description: Mascota no encontrada
+        500:
+          description: Error interno del servidor
+
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6530d76a9a12f10012b4a3c8
+        name:
+          type: string
+          example: Max
+        specie:
+          type: string
+          example: Perro
+        birthDate:
+          type: string
+          format: date
+          example: 2021-04-15
+        adopted:
+          type: boolean
+          example: false
+        owner:
+          type: string
+          example: 652a3d5baf8c2c0012e4f5a1
+        image:
+          type: string
+          example: https://cdn.example.com/uploads/pets/max.jpg
+
+    PetCreate:
+      type: object
+      required: [name, specie]
+      properties:
+        name:
+          type: string
+          example: Luna
+        specie:
+          type: string
+          example: Gato
+        birthDate:
+          type: string
+          format: date
+          example: 2020-11-03
+        adopted:
+          type: boolean
+          example: false
+        owner:
+          type: string
+          example: 652a3d5baf8c2c0012e4f5a1
+        image:
+          type: string
+          example: https://cdn.example.com/uploads/pets/luna.jpg
+
+    PetUpdate:
+      type: object
+      description: Campos permitidos para actualizar una mascota existente.
+      properties:
+        name:
+          type: string
+          example: Luna actualizada
+        specie:
+          type: string
+          example: Gato
+        birthDate:
+          type: string
+          format: date
+          example: 2019-05-22
+        adopted:
+          type: boolean
+          example: true
+        owner:
+          type: string
+          example: 652a3d5baf8c2c0012e4f5a2
+        image:
+          type: string
+          example: https://cdn.example.com/uploads/pets/luna.jpg

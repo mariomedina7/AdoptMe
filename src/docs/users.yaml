@@ -1,0 +1,165 @@
+
+paths:
+  /api/users:
+    get:
+      summary: Obtener todos los usuarios
+      tags:
+        - Usuarios
+      description: Retorna la lista completa de usuarios registrados en el sistema.
+      responses:
+        200:
+          description: Lista de usuarios obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        500:
+          description: Error interno del servidor
+
+  /api/users/{uid}:
+    get:
+      summary: Obtener un usuario por ID
+      tags:
+        - Usuarios
+      description: Retorna la información de un usuario específico según su ID.
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: ID del usuario que se desea consultar.
+      responses:
+        200:
+          description: Usuario obtenido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: Usuario no encontrado
+        500:
+          description: Error interno del servidor
+
+    put:
+      summary: Actualizar un usuario por ID
+      tags:
+        - Usuarios
+      description: Permite actualizar la información de un usuario existente.
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: ID del usuario que se desea actualizar.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        200:
+          description: Usuario actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Datos inválidos o formato incorrecto
+        404:
+          description: Usuario no encontrado
+        500:
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar un usuario por ID
+      tags:
+        - Usuarios
+      description: Elimina un usuario existente del sistema de forma permanente.
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: ID del usuario que se desea eliminar.
+      responses:
+        200:
+          description: Usuario eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Usuario eliminado correctamente
+        404:
+          description: Usuario no encontrado
+        500:
+          description: Error interno del servidor
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 652a3d5baf8c2c0012e4f5a1
+        first_name:
+          type: string
+          example: Mario
+        last_name:
+          type: string
+          example: Medina
+        email:
+          type: string
+          example: mario@example.com
+        password:
+          type: string
+          example: $2a$10$HashedPasswordExample
+        role:
+          type: string
+          enum: [user, admin]
+          example: user
+        pets:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: 652a3d5baf8c2c0012e4f5a2
+
+    UserUpdate:
+      type: object
+      description: Campos permitidos para actualizar un usuario existente.
+      properties:
+        first_name:
+          type: string
+          example: Mario actualizado
+        last_name:
+          type: string
+          example: Medina actualizado
+        email:
+          type: string
+          example: mario.nuevo@example.com
+        password:
+          type: string
+          example: nuevaPassword123
+        role:
+          type: string
+          example: admin
+        pets:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: 652a3d5baf8c2c0012e4f5a3
